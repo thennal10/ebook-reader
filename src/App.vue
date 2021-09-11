@@ -1,14 +1,21 @@
-<template>
+<template direction="ltr">
   <v-app>
     <v-app-bar
       app
       color="primary"
       dark
     >
+      <v-file-input
+        hide-input
+        clearable
+        prepend-icon="mdi-file-plus"
+        accept=".epub"
+        v-on:change="fileUpload">
+      </v-file-input>
     </v-app-bar>
 
     <v-main>
-      <Viewer/>
+      <Viewer v-if="file" :file="file"/>
     </v-main>
   </v-app>
 </template>
@@ -24,7 +31,19 @@ export default {
   },
 
   data: () => ({
-    //
+    file: NaN
   }),
+
+  methods: {
+    fileUpload(file) {
+      this.file = file
+    }
+  }
 };
 </script>
+
+<style>
+  #app {
+    direction: ltr;
+  }
+</style>

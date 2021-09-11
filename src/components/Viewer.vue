@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Navigator/>
+    <Navigator :noNext="noNext" :noPrev="noPrev"/>
     <div id="viewer"></div>
-    <Navigator/>
+    <Navigator :noNext="noNext" :noPrev="noPrev"/>
   </div>
 </template>
 
@@ -17,53 +17,54 @@ export default {
     Navigator
   },
 
+  props: {
+    file: File
+  },
+
+  data: () => ({
+    rendition: NaN,
+    noNext: false,
+    noPrev: false
+  }),
+
   mounted: function () {
-    var book = ePub("https://s3.amazonaws.com/epubjs/books/alice/OPS/package.opf")
-    var rendition = book.renderTo("viewer", {
-      flow: "scrolled-doc",
-      width: "100%",
-      fullsize: true
-    })
-    rendition.display()
+    var reader = new FileReader()
+    reader.onload = this.openBook
+    reader.readAsArrayBuffer(this.file)
+  },
 
-    // Assign next and back buttons
-    var next = this.$el.getElementsByClassName("next");
-    for (const element of next) {
-    element.addEventListener("click", function(e){
-      rendition.next()
+  methods: {
+    openBook(e){
+      var book = ePub();
+      var bookData = e.target.result;
+      book.open(bookData, "binary")
+
+      this.rendition = book.renderTo("viewer", {
+        flow: "scrolled-doc",
+        width: "100%",
+        fullsize: true
+      })
+
+      this.rendition.display()
+      
+      // Disable buttons when there's no next/prev section
+      this.rendition.on("rendered", this.buttonCheck)
+    },
+
+    // Checks if the forward/backward buttons should be disabled
+    buttonCheck (section) {
+      this.noNext = !(section.next())
+      this.noPrev = !(section.prev())
+    },
+
+    clickNext(e) {
+      this.rendition.next()
       e.preventDefault()
-    }, false)
-    }
-
-    var prev = this.$el.getElementsByClassName("prev");
-    for (const element of prev) {
-    element.addEventListener("click", function(e){
-      rendition.prev()
+    },
+    clickPrev(e) {
+      this.rendition.prev()
       e.preventDefault()
-    }, false)
     }
-
-    // Disable buttons when there's no next/prev section
-    rendition.on("rendered", function (section) {
-    let disable = arr => {
-      for (const element of arr) {
-        element.disabled = true
-        element.classList.add("v-btn--disabled")
-      }
-    }
-    let enable = arr => {
-      for (const element of arr) {
-        element.disabled = false
-        element.classList.remove("v-btn--disabled")
-      }
-    }
-
-    if (section.next()) { enable(next) }
-    else { disable(next) }
-
-    if (section.prev()) { enable(prev) }
-    else { disable(prev) }
-    })
   }
 }
 </script>
