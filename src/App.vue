@@ -22,8 +22,15 @@
 </template>
 
 <script>
+import Dexie from 'dexie'
 import Viewer from './components/Viewer.vue'
 import Library from './components/Library.vue'
+
+var db = new Dexie("MyDatabase");
+db.version(1).stores({
+    books: "++id, file"
+});
+
 
 export default {
   name: 'App',
@@ -33,6 +40,11 @@ export default {
     Library
   },
 
+  created: async function() {
+    var table = await db.books.toArray()
+    this.books = table.map(row => row.file)
+  },
+
   data: () => ({
     books: [],
     currentBook: null
@@ -40,6 +52,7 @@ export default {
 
   methods: {
     fileUpload(file) {
+      console.log(this.books)
       var reader = new FileReader()
       reader.onload = this.loadBook
       reader.readAsArrayBuffer(file)
@@ -48,6 +61,7 @@ export default {
     loadBook(e) {
       var bookData = e.target.result;
       this.books.push(bookData)
+      db.books.put({file: bookData})
     },
 
     openViewer(book) {
