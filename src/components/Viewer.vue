@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Navigator :noNext="noNext" :noPrev="noPrev"/>
+    <Navigator :noNext="noNext" :noPrev="noPrev" @next="rendition.next()" @prev="rendition.prev()"/>
     <div id="viewer"></div>
-    <Navigator :noNext="noNext" :noPrev="noPrev"/>
+    <Navigator :noNext="noNext" :noPrev="noPrev" @next="rendition.next()" @prev="rendition.prev()"/>
   </div>
 </template>
 
@@ -49,15 +49,6 @@ export default {
       this.noNext = !(section.next())
       this.noPrev = !(section.prev())
     },
-
-    clickNext(e) {
-      this.rendition.next()
-      e.preventDefault()
-    },
-    clickPrev(e) {
-      this.rendition.prev()
-      e.preventDefault()
-    }
   }
 }
 </script>

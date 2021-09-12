@@ -3,14 +3,14 @@
     <v-row justify="center">
       <v-btn 
         class="ma-2" text icon
-        @click="clickPrev"
+        @click.prevent="$emit('prev')"
         :disabled="noPrev"
       >
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
       <v-btn 
         class="ma-2" text icon
-        @click="clickNext"
+        @click.prevent="$emit('next')"
         :disabled="noNext"
       >
         <v-icon>mdi-chevron-right</v-icon>
@@ -26,15 +26,6 @@
     props: {
       noNext: Boolean,
       noPrev: Boolean
-    },
-
-    methods: {
-      clickNext(e) {
-        this.$parent.clickNext(e)
-      },
-      clickPrev(e) {
-        this.$parent.clickPrev(e)
-      }
     }
   }
 </script>
