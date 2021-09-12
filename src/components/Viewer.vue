@@ -18,7 +18,7 @@ export default {
   },
 
   props: {
-    file: File
+    book: ArrayBuffer
   },
 
   data: () => ({
@@ -28,29 +28,22 @@ export default {
   }),
 
   mounted: function () {
-    var reader = new FileReader()
-    reader.onload = this.openBook
-    reader.readAsArrayBuffer(this.file)
+    var epub = ePub();
+    epub.open(this.book, "binary")
+
+    this.rendition = epub.renderTo("viewer", {
+      flow: "scrolled-doc",
+      width: "100%",
+      fullsize: true
+    })
+
+    this.rendition.display()
+    
+    // Disable buttons when there's no next/prev section
+    this.rendition.on("rendered", this.buttonCheck)
   },
 
   methods: {
-    openBook(e){
-      var book = ePub();
-      var bookData = e.target.result;
-      book.open(bookData, "binary")
-
-      this.rendition = book.renderTo("viewer", {
-        flow: "scrolled-doc",
-        width: "100%",
-        fullsize: true
-      })
-
-      this.rendition.display()
-      
-      // Disable buttons when there's no next/prev section
-      this.rendition.on("rendered", this.buttonCheck)
-    },
-
     // Checks if the forward/backward buttons should be disabled
     buttonCheck (section) {
       this.noNext = !(section.next())
