@@ -4,7 +4,8 @@
       <v-col 
         v-for="(book, i) in books" 
         :key="i"
-        cols="4"
+        cols="6"
+        sm="4"
         >
         <LibraryEntry 
           :book="book"

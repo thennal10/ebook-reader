@@ -6,55 +6,51 @@
     >
       <v-img :src="metadata.cover" aspect-ratio="0.625">
         <v-container fill-height fluid>
-          <v-icon 
-            class="align-self-start"
-            @click="overlay = !overlay"
-            >
-            mdi-close
-          </v-icon>
+          <v-dialog
+            v-model="dialog"
+            max-width="600"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon 
+                class="align-self-start "
+                v-bind="attrs"
+                v-on="on"
+                >
+                mdi-close
+              </v-icon>
+            </template>
+            <v-card>
+              <v-card-title class="text-h5">
+                Delete "{{metadata.title}}"?
+              </v-card-title>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="red darken-1"
+                  text
+                  @click="dialog = false"
+                >
+                  No
+                </v-btn>
+                <v-btn
+                  color="green darken-1"
+                  text
+                  @click="$emit('delete'); dialog = false"
+                >
+                  Yes
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
           <v-row
             class="fill-height"
             align="center" 
-            justify="center"      
             @click="$emit('open-viewer')"
             >
-            <p v-if="!metadata.cover" class="text-h4 pa-4">
+            <p v-if="!metadata.cover" class="text-sm-h4 text-h5 pa-4">
               {{metadata.title}}
             </p>
           </v-row>
-          <v-overlay
-            :absolute="true"
-            :opacity="0.9"
-            :value="overlay"
-          >
-            <v-container>
-              <v-row justify="center" class="ma-2">
-                <p class="text-h5"> 
-                  <b>Delete</b> {{metadata.title}}?
-                </p>
-              </v-row>
-              <v-spacer></v-spacer>
-              <v-row justify="center" class="ma-2">
-                <v-btn
-                  color="green lighten-1"
-                  large
-                  @click="$emit('delete'); overlay = false"
-                >
-                  YES
-                </v-btn>
-              </v-row>
-              <v-row justify="center">
-                <v-btn
-                  color="red lighten-1"
-                  large
-                  @click="overlay = false"
-                >
-                  NO
-                </v-btn>
-              </v-row>
-            </v-container>
-
-          </v-overlay>
         </v-container>
       </v-img>
     </v-card>
@@ -71,7 +67,7 @@ export default {
   },
 
   data: () => ({
-    overlay: false
+    dialog: false
   })
 }
 </script>
