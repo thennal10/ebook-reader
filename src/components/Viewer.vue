@@ -18,7 +18,8 @@ export default {
   },
 
   props: {
-    book: ArrayBuffer
+    book: ArrayBuffer,
+    bookmarks: Array
   },
 
   data: () => ({
@@ -37,7 +38,8 @@ export default {
       fullsize: true
     })
 
-    this.rendition.display()
+    let bookmark = this.bookmarks[this.bookmarks.length - 1]
+    this.rendition.display(bookmark.start.cfi)
     
     // Disable buttons when there's no next/prev section
     this.rendition.on("rendered", this.buttonCheck)
@@ -49,6 +51,10 @@ export default {
       this.noNext = !(section.next())
       this.noPrev = !(section.prev())
     },
+
+    newBookmark() {
+      return this.rendition.currentLocation()
+    }
   }
 }
 </script>
