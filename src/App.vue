@@ -16,7 +16,11 @@
 
     <v-main>
       <Viewer v-if="currentBook" :book="currentBook"/>
-      <Library v-else :books="books" @open-viewer="openViewer($event)"/>
+      <Library v-else 
+        :books="books" 
+        @open-viewer="openViewer($event)"
+        @delete-book="deleteBook($event)"
+        />
     </v-main>
   </v-app>
 </template>
@@ -26,7 +30,7 @@ import Dexie from 'dexie'
 import Viewer from './components/Viewer.vue'
 import Library from './components/Library.vue'
 
-var db = new Dexie("MyDatabase");
+var db = new Dexie("Books");
 db.version(1).stores({
     books: "++id, file"
 });
@@ -66,6 +70,11 @@ export default {
 
     openViewer(book) {
       this.currentBook = book
+    },
+
+    async deleteBook(index) {
+      this.books.splice(index, 1)
+      await db.books.delete(index + 1)
     }
   }
 };

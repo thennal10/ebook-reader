@@ -6,23 +6,12 @@
         :key="i"
         cols="4"
         >
-        <v-hover v-slot="{ hover }">
-          <v-card
-            :elevation="hover ? 12 : 2"
-            :class="{ 'on-hover': hover }"
-            @click="$emit('open-viewer', book)"
-          >
-            <v-img :src="book.url" aspect-ratio="0.625">
-              <v-container fill-height fluid>
-                <v-row align="center" justify="center">
-                  <p v-if="!book.url" class="text-h4 pa-4">
-                    {{book.title}}
-                  </p>
-                </v-row>
-              </v-container>
-            </v-img>
-          </v-card>
-        </v-hover>
+        <LibraryEntry 
+          :book="book" 
+          @open-viewer="$emit('open-viewer', book)"
+          @delete="$emit('delete-book', i)"
+          />
+        
       </v-col>
     </v-row>
   </v-container>
@@ -30,6 +19,7 @@
 
 <script>
 import ePub from 'epubjs';
+import LibraryEntry from './LibraryEntry.vue'
 
 export default {
   name: 'Library',
@@ -38,9 +28,9 @@ export default {
     books: Array
   },
 
-  data: () => ({
-    //
-  }),
+  components: {
+    LibraryEntry
+  },
 
   created: function() {
     this.populateMetadata(this.books)
