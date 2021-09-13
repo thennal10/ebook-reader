@@ -1,5 +1,5 @@
 <template>
-  <v-hover v-slot="{ hover }">
+  <v-hover v-slot="{ hover }" v-if="metadata">
     <v-card
       :elevation="hover ? 12 : 2"
       :class="{ 'on-hover': hover }"
