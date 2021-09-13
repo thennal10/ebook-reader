@@ -54,9 +54,6 @@ export default {
         
         this.bookMetadata.push({cover: cover, title:title})
       }
-    },
-    cock() {
-      console.log(this.bookMetadata)
     }
   },
 
