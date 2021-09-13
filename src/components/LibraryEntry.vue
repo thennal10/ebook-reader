@@ -4,7 +4,7 @@
       :elevation="hover ? 12 : 2"
       :class="{ 'on-hover': hover }"
     >
-      <v-img :src="book.url" aspect-ratio="0.625">
+      <v-img :src="metadata.cover" aspect-ratio="0.625">
         <v-container fill-height fluid>
           <v-icon 
             class="align-self-start"
@@ -18,8 +18,8 @@
             justify="center"      
             @click="$emit('open-viewer')"
             >
-            <p v-if="!book.url" class="text-h4 pa-4">
-              {{book.title}}
+            <p v-if="!metadata.cover" class="text-h4 pa-4">
+              {{metadata.title}}
             </p>
           </v-row>
           <v-overlay
@@ -30,7 +30,7 @@
             <v-container>
               <v-row justify="center" class="ma-2">
                 <p class="text-h5"> 
-                  <b>Delete</b> {{book.title}}?
+                  <b>Delete</b> {{metadata.title}}?
                 </p>
               </v-row>
               <v-spacer></v-spacer>
@@ -66,7 +66,8 @@ export default {
   name: 'LibraryEntry',
 
   props: {
-    book: ArrayBuffer
+    book: ArrayBuffer,
+    metadata: Object
   },
 
   data: () => ({

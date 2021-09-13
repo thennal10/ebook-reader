@@ -7,7 +7,8 @@
         cols="4"
         >
         <LibraryEntry 
-          :book="book" 
+          :book="book"
+          :metadata="bookMetadata[i]"
           @open-viewer="$emit('open-viewer', book)"
           @delete="$emit('delete-book', i)"
           />
@@ -28,36 +29,42 @@ export default {
     books: Array
   },
 
+  data: () => ({
+    bookMetadata: []  
+  }),
+
   components: {
     LibraryEntry
   },
 
-  created: function() {
-    this.populateMetadata(this.books)
+  created: async function() {
+    await this.populateMetadata(this.books)
   },
 
   methods: {
-    populateMetadata(books) {
+    async populateMetadata(books) {
+      this.bookMetadata = []
       for (var book of books) {
-        var epub = ePub();
-        epub.open(book, "binary")
-        epub.ready.then(() => {
-          epub.coverUrl().then((url) => {
-            epub.loaded.metadata.then((metadata) => {
-              book.title = metadata.title
-              book.url = url
-            })
-          })
-        })
+        var epub = ePub()
+        await epub.open(book, "binary")
+
+        var cover = await epub.coverUrl()
+        var metadata = await epub.loaded.metadata
+        var title = metadata.title
+        
+        this.bookMetadata.push({cover: cover, title:title})
       }
+    },
+    cock() {
+      console.log(this.bookMetadata)
     }
   },
 
   watch: {
     // Computed properties can't have async functions inside them, so
     // I have to do this shit instead.
-    books: function (books) {
-      this.populateMetadata(books)
+    books: async function (books) {
+      await this.populateMetadata(books)
     }
   }
 }
