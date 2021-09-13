@@ -56,7 +56,6 @@ export default {
 
   methods: {
     fileUpload(file) {
-      console.log(this.books)
       var reader = new FileReader()
       reader.onload = this.loadBook
       reader.readAsArrayBuffer(file)
@@ -73,7 +72,6 @@ export default {
     },
 
     async deleteBook(book) {
-      console.log(book)
       const keyArr = await db.books
         .where("file")
         .equals(book)
