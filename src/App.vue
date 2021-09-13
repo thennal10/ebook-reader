@@ -1,19 +1,9 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <v-file-input
-        hide-input
-        clearable
-        prepend-icon="mdi-file-plus"
-        accept=".epub"
-        @change="fileUpload">
-      </v-file-input>
-    </v-app-bar>
-
+    <AppBar 
+      @upload="fileUpload"
+      @back="currentBook = null"
+    />
     <v-main>
       <Viewer v-if="currentBook" :book="currentBook"/>
       <Library v-else 
@@ -27,6 +17,7 @@
 
 <script>
 import Dexie from 'dexie'
+import AppBar from './components/AppBar.vue'
 import Viewer from './components/Viewer.vue'
 import Library from './components/Library.vue'
 
@@ -40,6 +31,7 @@ export default {
   name: 'App',
 
   components: {
+    AppBar,
     Viewer,
     Library
   },
