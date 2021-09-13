@@ -72,9 +72,14 @@ export default {
       this.currentBook = book
     },
 
-    async deleteBook(index) {
-      this.books.splice(index, 1)
-      await db.books.delete(index + 1)
+    async deleteBook(book) {
+      console.log(book)
+      const keyArr = await db.books
+        .where("file")
+        .equals(book)
+        .primaryKeys()
+      this.books = this.books.filter(item => item != book)
+      await db.books.delete(keyArr[0])
     }
   }
 };

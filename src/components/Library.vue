@@ -10,7 +10,7 @@
           :book="book"
           :metadata="bookMetadata[i]"
           @open-viewer="$emit('open-viewer', book)"
-          @delete="$emit('delete-book', i)"
+          @delete="$emit('delete-book', book)"
           />
         
       </v-col>
