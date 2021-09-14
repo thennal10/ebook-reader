@@ -49,7 +49,7 @@ export default {
 
   data: () => ({
     books: [],
-    currentBook: null // {file: ArrayBuffer, bookmarks: Object}
+    currentBook: null // {file: ArrayBuffer, bookmarks: Array[String]}
   }),
 
   methods: {
