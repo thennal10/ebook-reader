@@ -9,7 +9,8 @@
       <Viewer 
         v-if="currentBook" 
         :book="currentBook.file"
-        :bookmarks="currentBook.bookmarks" 
+        :bookmarks="currentBook.bookmarks"
+        @delete-bookmark="deleteBookmark($event)"
         ref="viewer"
         />
       <Library v-else 
@@ -83,6 +84,12 @@ export default {
       const newBookmark = this.$refs.viewer.newBookmark()
       this.currentBook.bookmarks.push(newBookmark)
 
+      const key = await this.getBookKey(this.currentBook.file)
+      db.books.update(key, {bookmarks: this.currentBook.bookmarks})
+    },
+
+    async deleteBookmark(bookmark) {
+      this.currentBook.bookmarks = this.currentBook.bookmarks.filter(b => b != bookmark)
       const key = await this.getBookKey(this.currentBook.file)
       db.books.update(key, {bookmarks: this.currentBook.bookmarks})
     },

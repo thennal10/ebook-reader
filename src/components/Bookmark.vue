@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="$emit('delete')">
   </div>
 </template>
 
@@ -8,7 +8,7 @@ export default {
   name: 'Bookmark',
 
   methods: {
-    
+
   }
 }
 </script>
@@ -19,5 +19,6 @@ div {
   width: 30px;
   background-color: red;
   position: absolute;
+  z-index: 1;
 }
 </style>

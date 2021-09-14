@@ -1,7 +1,12 @@
 <template>
   <div>
     <Navigator :noNext="noNext" :noPrev="noPrev" @next="rendition.next()" @prev="rendition.prev()"/>
-    <Bookmark v-for="style in bookmarkStyles" :key="style.top" :style="style" />
+    <Bookmark 
+      v-for="bookmark in currentBookmarks" 
+      :key="bookmark.style.top" 
+      :style="bookmark.style" 
+      @delete="deleteBookmark(bookmark)"
+      />
     <div id="viewer"></div>
     <Navigator :noNext="noNext" :noPrev="noPrev" @next="rendition.next()" @prev="rendition.prev()"/>
   </div>
@@ -28,7 +33,7 @@ export default {
   data: () => ({
     rendition: null,
     iframeDoc: null,
-    bookmarkStyles: [], // Only bookmarks used in current section
+    currentBookmarks: [], // {bookmark, style}
     noNext: false,
     noPrev: false
   }),
@@ -57,26 +62,36 @@ export default {
       this.iframeDoc = document.getElementsByTagName('iframe')[0].contentWindow.document
       
       // Load bookmarks
-      this.bookmarkStyles = []
+      this.currentBookmarks = []
       for (const bookmark of this.bookmarks) {
         const cfi = new ePub.CFI(bookmark)
         if (cfi.spinePos == section.index) {
-          this.addBookmarkStyle(cfi)
+          this.loadBookmark(bookmark, cfi)
         }
       }
     },
 
     newBookmark() {
-      let currentLoc = this.rendition.currentLocation()
-      this.addBookmarkStyle(new ePub.CFI(currentLoc.start.cfi))
-      return currentLoc.start.cfi
+      let currentLoc = this.rendition.currentLocation().start.cfi
+      this.loadBookmark(currentLoc, new ePub.CFI(currentLoc))
+      return currentLoc
     },
 
-    addBookmarkStyle(cfi) {
+    // Load bookmark into current bookmarks
+    loadBookmark(bookmark, cfi) {
       let range = cfi.toRange(this.iframeDoc)
       let rect = range.getBoundingClientRect()
-      this.bookmarkStyles.push({top: `${rect.top}px`})
+      this.currentBookmarks.push({
+        bookmark: bookmark, 
+        style: {top: `${rect.top}px`}
+      })
+    },
+
+    deleteBookmark(bookmark) {
+      this.currentBookmarks = this.currentBookmarks.filter(b => b != bookmark)
+      this.$emit('delete-bookmark', bookmark.bookmark)
     }
+    
   }
 }
 </script>
