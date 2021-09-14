@@ -2,10 +2,10 @@
   <div>
     <Navigator :noNext="noNext" :noPrev="noPrev" @next="rendition.next()" @prev="rendition.prev()"/>
     <Bookmark 
-      v-for="bookmark in currentBookmarks" 
-      :key="bookmark.style.top" 
-      :style="bookmark.style" 
-      @delete="deleteBookmark(bookmark)"
+      v-for="bookmarkObj in currentBookmarks" 
+      :key="bookmarkObj.style.top" 
+      :style="bookmarkObj.style" 
+      @delete="deleteBookmark(bookmarkObj)"
       />
     <div id="viewer"></div>
     <Navigator :noNext="noNext" :noPrev="noPrev" @next="rendition.next()" @prev="rendition.prev()"/>
@@ -77,7 +77,7 @@ export default {
       return currentLoc
     },
 
-    // Load bookmark into current bookmarks
+    // Load bookmark into current bookmarks, and set style
     loadBookmark(bookmark, cfi) {
       let range = cfi.toRange(this.iframeDoc)
       let rect = range.getBoundingClientRect()
@@ -87,9 +87,9 @@ export default {
       })
     },
 
-    deleteBookmark(bookmark) {
-      this.currentBookmarks = this.currentBookmarks.filter(b => b != bookmark)
-      this.$emit('delete-bookmark', bookmark.bookmark)
+    deleteBookmark(bookmarkObj) {
+      this.currentBookmarks = this.currentBookmarks.filter(b => b != bookmarkObj)
+      this.$emit('delete-bookmark', bookmarkObj.bookmark)
     }
     
   }
