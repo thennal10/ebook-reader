@@ -17,7 +17,7 @@ export default {
 
 <style scoped>
 div {
-  border: 10px solid lightseagreen;
+  border: 10px solid lightblue;
   border-left: 0;
   border-right: 10px solid transparent;
   width: 30px;
