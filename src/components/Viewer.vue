@@ -34,6 +34,8 @@ export default {
     rendition: null,
     iframeDoc: null,
     currentSectionIndex: 0,
+    startTime: 0,
+    elapsedTime: 0,
     noNext: false,
     noPrev: false
   }),
@@ -41,6 +43,11 @@ export default {
   mounted: function () {
     var epub = ePub();
     epub.open(this.book, "binary")
+
+    // Required for locations to function
+    epub.ready.then(() => {
+      epub.locations.generate(1)
+    })
 
     this.rendition = epub.renderTo("viewer", {
       flow: "scrolled-doc",
@@ -50,6 +57,18 @@ export default {
 
     this.rendition.display(this.bookmarks[this.bookmarks.length - 1])
     this.rendition.on("rendered", this.onSectionChange)
+
+    // Track time spent
+    this.startTime = + new Date()
+    window.addEventListener('focus', () => {
+      this.startTime = + new Date()
+    })
+    window.addEventListener('blur', () => {
+      const endDate = + new Date()
+      const spentTime = endDate - this.startTime
+      this.elapsedTime += spentTime
+    });
+
   },
 
   methods: {
@@ -64,8 +83,17 @@ export default {
     },
 
     newBookmark() {
-      let currentLoc = this.rendition.currentLocation()
-      return currentLoc.start.cfi
+      let currentLoc = this.rendition.currentLocation().start
+
+      const timeSpent = new Date() - this.startTime + this.elapsedTime
+      this.startTime = + new Date()
+      this.elapsedTime = 0
+      
+      return [currentLoc.cfi, { 
+        location: currentLoc.location,
+        percentage: currentLoc.percentage,
+        time: timeSpent
+      }]
     },
 
     deleteBookmark(index) {

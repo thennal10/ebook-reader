@@ -28,11 +28,11 @@ import AppBar from './components/AppBar.vue'
 import Viewer from './components/Viewer.vue'
 import Library from './components/Library.vue'
 
-var db = new Dexie("Books");
+var db = new Dexie("Books")
 db.version(1).stores({
-    books: "++id, file, bookmarks"
-});
-
+  books: "++id, file, bookmarks",
+  stats: "++id, location, percentage, time"
+})
 
 export default {
   name: 'App',
@@ -87,9 +87,10 @@ export default {
     },
 
     async setBookmark() {
-      const newBookmark = this.$refs.viewer.newBookmark()
-      this.currentBook.bookmarks.push(newBookmark)
+      const [newBookmark, bookmarkStat] = this.$refs.viewer.newBookmark()
+      db.stats.put(bookmarkStat)
 
+      this.currentBook.bookmarks.push(newBookmark)
       const key = await this.getBookKey(this.currentBook.file)
       db.books.update(key, {bookmarks: this.currentBook.bookmarks})
     },
