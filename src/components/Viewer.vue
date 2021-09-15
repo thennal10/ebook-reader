@@ -2,10 +2,10 @@
   <div>
     <Navigator :noNext="noNext" :noPrev="noPrev" @next="rendition.next()" @prev="rendition.prev()"/>
     <Bookmark 
-      v-for="bookmarkObj in currentBookmarks" 
-      :key="bookmarkObj.style.top" 
-      :style="bookmarkObj.style" 
-      @delete="deleteBookmark(bookmarkObj)"
+      v-for="(style, i) in bookmarkStyles" 
+      :key="style.top" 
+      :style="style" 
+      @delete="deleteBookmark(i)"
       />
     <div id="viewer"></div>
     <Navigator :noNext="noNext" :noPrev="noPrev" @next="rendition.next()" @prev="rendition.prev()"/>
@@ -68,29 +68,28 @@ export default {
       return currentLoc.start.cfi
     },
 
-    deleteBookmark(bookmarkObj) {
-      this.$emit('delete-bookmark', bookmarkObj.bookmark)
+    deleteBookmark(index) {
+      this.$emit('delete-bookmark', this.currentBookmarks[index])
     }
   },
 
   computed: {
     currentBookmarks() {
-      let currentBookmarks = []
-      if (this.currentSectionIndex) { // Changes only after render is over
-        for (const bookmark of this.bookmarks) {
+      return this.bookmarks.filter((bookmark) => {
+        if (this.currentSectionIndex) { // Changes only after render is over
           const cfi = new ePub.CFI(bookmark)
-          if (cfi.spinePos == this.currentSectionIndex) {
-            let range = cfi.toRange(this.iframeDoc)
-            let rect = range.getBoundingClientRect()
-            currentBookmarks.push({
-              bookmark: bookmark, 
-              style: {top: `${rect.top}px`}
-            })
-          }
+          return cfi.spinePos == this.currentSectionIndex
         }
-      }
+      })
+    },
 
-      return currentBookmarks
+    bookmarkStyles() {
+      return this.currentBookmarks.map((bookmark) => {
+        const cfi = new ePub.CFI(bookmark)
+        let range = cfi.toRange(this.iframeDoc)
+        let rect = range.getBoundingClientRect()
+        return {top: `${rect.top}px`}
+      })
     }
   }
 }
