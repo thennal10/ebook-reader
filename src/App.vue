@@ -46,6 +46,12 @@ export default {
   created: async function() {
     var table = await db.books.toArray()
     this.books = table.map(row => row.file)
+
+    let currentBookIndex = window.sessionStorage.getItem('currentBookIndex')
+    if (currentBookIndex != 'null') { // Because sessionStorage is dumb
+      console.log(currentBookIndex)
+      this.openViewer(this.books[currentBookIndex])
+    }
   },
 
   data: () => ({
@@ -101,6 +107,19 @@ export default {
         .primaryKeys()
       return keyArr[0]
     }  
+  },
+
+  watch: {
+    /* This fires every time a bookmark is added too which 
+    is kind of unecessary but I can live with it.
+    Saving the index because session storage and ArrayBuffers do not mix well*/
+    currentBook: function(val) {
+      var index = null;
+      if (val) {
+        index = this.books.indexOf(val.file)
+      }
+      window.sessionStorage.setItem('currentBookIndex', index)
+    }
   }
 };
 </script>
