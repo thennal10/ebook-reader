@@ -33,7 +33,7 @@ export default {
   data: () => ({
     rendition: null,
     iframeDoc: null,
-    currentBookmarks: [], // {bookmark, style}
+    currentSectionIndex: 0,
     noNext: false,
     noPrev: false
   }),
@@ -58,40 +58,40 @@ export default {
       this.noNext = !(section.next())
       this.noPrev = !(section.prev())
 
-      // Save iframe
+      // Save iframe and section index
       this.iframeDoc = document.getElementsByTagName('iframe')[0].contentWindow.document
-      
-      // Load bookmarks
-      this.currentBookmarks = []
-      for (const bookmark of this.bookmarks) {
-        const cfi = new ePub.CFI(bookmark)
-        if (cfi.spinePos == section.index) {
-          this.loadBookmark(bookmark, cfi)
-        }
-      }
+      this.currentSectionIndex = section.index
     },
 
     newBookmark() {
-      let currentLoc = this.rendition.currentLocation().start.cfi
-      this.loadBookmark(currentLoc, new ePub.CFI(currentLoc))
-      return currentLoc
-    },
-
-    // Load bookmark into current bookmarks, and set style
-    loadBookmark(bookmark, cfi) {
-      let range = cfi.toRange(this.iframeDoc)
-      let rect = range.getBoundingClientRect()
-      this.currentBookmarks.push({
-        bookmark: bookmark, 
-        style: {top: `${rect.top}px`}
-      })
+      let currentLoc = this.rendition.currentLocation()
+      return currentLoc.start.cfi
     },
 
     deleteBookmark(bookmarkObj) {
-      this.currentBookmarks = this.currentBookmarks.filter(b => b != bookmarkObj)
       this.$emit('delete-bookmark', bookmarkObj.bookmark)
     }
-    
+  },
+
+  computed: {
+    currentBookmarks() {
+      let currentBookmarks = []
+      if (this.currentSectionIndex) { // Changes only after render is over
+        for (const bookmark of this.bookmarks) {
+          const cfi = new ePub.CFI(bookmark)
+          if (cfi.spinePos == this.currentSectionIndex) {
+            let range = cfi.toRange(this.iframeDoc)
+            let rect = range.getBoundingClientRect()
+            currentBookmarks.push({
+              bookmark: bookmark, 
+              style: {top: `${rect.top}px`}
+            })
+          }
+        }
+      }
+
+      return currentBookmarks
+    }
   }
 }
 </script>
