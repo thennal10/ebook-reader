@@ -129,6 +129,7 @@ export default {
   watch: {
     'settings.theme': function() {
       this.rendition.themes.select(this.settings.theme)
+      this.$vuetify.theme.dark = this.settings.theme == 'dark'
     },
     'settings.fontSize': function() {
       this.rendition.themes.fontSize(`${this.settings.fontSize}%`)

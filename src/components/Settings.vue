@@ -14,7 +14,7 @@
           @input="$emit('change-theme', $event)"
           :items="themes"
           label="Theme"
-          hint="Reload might be required"
+          hint="Viewer reload might be required"
           persistent-hint
           outlined
         ></v-select>
@@ -24,10 +24,11 @@
           label="Font Size"
           max="150"
           min="50"
-          thumb-label="always"
         >
-          <template v-slot:thumb-label="{ value }">
-            {{ `${value}%` }}
+          <template v-slot:append>
+            <p>            
+              {{ `${settings.fontSize}%` }}
+            </p>
           </template>
         </v-slider>
       </v-card-text>
