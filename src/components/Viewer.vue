@@ -58,7 +58,9 @@ export default {
 
     this.rendition.themes.register('light', {p: {color: 'black'}, html: {background: 'white'}})
     this.rendition.themes.register('dark', {p: {color: 'white'}, html: {background: 'black'}})
+    
     this.rendition.themes.select(this.settings.theme)
+    this.rendition.themes.fontSize(`${this.settings.fontSize}%`)
     
     this.rendition.display(this.bookmarks[this.bookmarks.length - 1])
     this.rendition.on("rendered", this.onSectionChange)
@@ -129,7 +131,6 @@ export default {
   watch: {
     'settings.theme': function() {
       this.rendition.themes.select(this.settings.theme)
-      this.$vuetify.theme.dark = this.settings.theme == 'dark'
     },
     'settings.fontSize': function() {
       this.rendition.themes.fontSize(`${this.settings.fontSize}%`)

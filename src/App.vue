@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <AppBar 
+    <AppBar
+      :onViewer="Boolean(currentBook)"
       @upload="fileUpload"
       @back="currentBook = null"
       @bookmark="setBookmark"
@@ -68,7 +69,7 @@ export default {
     books: [],
     currentBook: null, // {file: ArrayBuffer, bookmarks: Array[String]}
     bookmarkStats: null,
-    settingsDialog: true,
+    settingsDialog: false,
     settings: { theme: 'light', fontSize: 100 }
   }),
 
@@ -133,6 +134,10 @@ export default {
         index = this.books.indexOf(val.file)
       }
       window.sessionStorage.setItem('currentBookIndex', index)
+    },
+
+    'settings.theme': function() {
+      this.$vuetify.theme.dark = this.settings.theme == 'dark'
     }
   }
 };

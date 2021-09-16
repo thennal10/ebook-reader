@@ -17,10 +17,10 @@ export default {
 
 <style scoped>
 div {
-  border: 10px solid lightblue;
+  border: 10px solid rgb(95, 170, 170);
   border-left: 0;
   border-right: 10px solid transparent;
-  width: 30px;
+  width: 25px;
   
   position: absolute;
   z-index: 1;
