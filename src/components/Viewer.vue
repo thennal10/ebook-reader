@@ -27,7 +27,8 @@ export default {
 
   props: {
     book: ArrayBuffer,
-    bookmarks: Array
+    bookmarks: Array,
+    settings: Object
   },
 
   data: () => ({
@@ -55,6 +56,10 @@ export default {
       fullsize: true
     })
 
+    this.rendition.themes.register('light', {p: {color: 'black'}, html: {background: 'white'}})
+    this.rendition.themes.register('dark', {p: {color: 'white'}, html: {background: 'black'}})
+    this.rendition.themes.select(this.settings.theme)
+    
     this.rendition.display(this.bookmarks[this.bookmarks.length - 1])
     this.rendition.on("rendered", this.onSectionChange)
 
@@ -118,6 +123,15 @@ export default {
         let rect = range.getBoundingClientRect()
         return {top: `${rect.top}px`}
       })
+    }
+  },
+
+  watch: {
+    'settings.theme': function() {
+      this.rendition.themes.select(this.settings.theme)
+    },
+    'settings.fontSize': function() {
+      this.rendition.themes.fontSize(`${this.settings.fontSize}%`)
     }
   }
 }

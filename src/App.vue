@@ -4,12 +4,20 @@
       @upload="fileUpload"
       @back="currentBook = null"
       @bookmark="setBookmark"
-    />
+      @settings="settingsDialog = true"
+      />
     <v-main>
+      <Settings 
+        v-model="settingsDialog"
+        :settings="settings"
+        @change-theme="settings.theme = $event"
+        @change-fontsize="settings.fontSize = $event"
+        />
       <Viewer 
         v-if="currentBook" 
         :book="currentBook.file"
         :bookmarks="currentBook.bookmarks"
+        :settings="settings"
         @delete-bookmark="deleteBookmark($event)"
         ref="viewer"
         />
@@ -27,6 +35,7 @@ import Dexie from 'dexie'
 import AppBar from './components/AppBar.vue'
 import Viewer from './components/Viewer.vue'
 import Library from './components/Library.vue'
+import Settings from './components/Settings.vue'
 
 var db = new Dexie("Books")
 db.version(1).stores({
@@ -40,7 +49,8 @@ export default {
   components: {
     AppBar,
     Viewer,
-    Library
+    Library,
+    Settings
   },
 
   created: async function() {
@@ -56,7 +66,10 @@ export default {
 
   data: () => ({
     books: [],
-    currentBook: null // {file: ArrayBuffer, bookmarks: Array[String]}
+    currentBook: null, // {file: ArrayBuffer, bookmarks: Array[String]}
+    bookmarkStats: null,
+    settingsDialog: true,
+    settings: { theme: 'light', fontSize: 100 }
   }),
 
   methods: {
