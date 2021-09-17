@@ -58,9 +58,9 @@ export default {
     var table = await db.books.toArray()
     this.books = table.map(row => row.file)
 
+    this.settings = JSON.parse(window.localStorage.getItem('settings'))
     let currentBookIndex = window.sessionStorage.getItem('currentBookIndex')
     if (currentBookIndex != 'null') { // Because sessionStorage is dumb
-      console.log(currentBookIndex)
       this.openViewer(this.books[currentBookIndex])
     }
   },
@@ -138,6 +138,13 @@ export default {
 
     'settings.theme': function() {
       this.$vuetify.theme.dark = this.settings.theme == 'dark'
+    },
+
+    settings: {
+      handler: function (val) { 
+        window.localStorage.setItem('settings', JSON.stringify(val)) 
+      },
+      deep: true
     }
   }
 };
