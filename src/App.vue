@@ -58,7 +58,10 @@ export default {
     var table = await db.books.toArray()
     this.books = table.map(row => row.file)
 
-    this.settings = JSON.parse(window.localStorage.getItem('settings'))
+    let settings = JSON.parse(window.localStorage.getItem('settings'))
+    if (settings) {
+      this.settings = settings
+    }
     let currentBookIndex = window.sessionStorage.getItem('currentBookIndex')
     if (currentBookIndex != 'null') { // Because sessionStorage is dumb
       this.openViewer(this.books[currentBookIndex])
