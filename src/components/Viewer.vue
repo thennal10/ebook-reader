@@ -42,7 +42,7 @@ export default {
   }),
 
   mounted: function () {
-    var epub = ePub();
+    var epub = ePub()
     epub.open(this.book, "binary")
 
     // Required for locations to function
@@ -65,17 +65,7 @@ export default {
     this.rendition.display(this.bookmarks[this.bookmarks.length - 1])
     this.rendition.on("rendered", this.onSectionChange)
 
-    // Track time spent
     this.startTime = + new Date()
-    window.addEventListener('focus', () => {
-      this.startTime = + new Date()
-    })
-    window.addEventListener('blur', () => {
-      const endDate = + new Date()
-      const spentTime = endDate - this.startTime
-      this.elapsedTime += spentTime
-    });
-
   },
 
   methods: {
@@ -87,6 +77,16 @@ export default {
       // Save iframe and section index
       this.iframeDoc = document.getElementsByTagName('iframe')[0].contentWindow.document
       this.currentSectionIndex = section.index
+
+      // Track time spent
+      this.iframeDoc.addEventListener('focus', () => {
+        this.startTime = + new Date()
+      })
+      this.iframeDoc.addEventListener('blur', () => {
+        const endDate = + new Date()
+        const spentTime = endDate - this.startTime
+        this.elapsedTime += spentTime
+      })
     },
 
     newBookmark() {
