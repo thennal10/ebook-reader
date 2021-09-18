@@ -99,7 +99,8 @@ export default {
       return [currentLoc.cfi, { 
         location: currentLoc.location,
         percentage: currentLoc.percentage,
-        time: timeSpent
+        time: timeSpent,
+        timestamp: this.startTime
       }]
     },
 

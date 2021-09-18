@@ -11,6 +11,7 @@
       <Settings 
         v-model="settingsDialog"
         :settings="settings"
+        :stats="bookmarkStats"
         @change-theme="settings.theme = $event"
         @change-fontsize="settings.fontSize = $event"
         />
@@ -57,6 +58,8 @@ export default {
   created: async function() {
     var table = await db.books.toArray()
     this.books = table.map(row => row.file)
+
+    this.bookmarkStats = await db.stats.toArray()
 
     let settings = JSON.parse(window.localStorage.getItem('settings'))
     if (settings) {
@@ -105,6 +108,7 @@ export default {
 
     async setBookmark() {
       const [newBookmark, bookmarkStat] = this.$refs.viewer.newBookmark()
+      this.bookmarkStats.push(bookmarkStat)
       db.stats.put(bookmarkStat)
 
       this.currentBook.bookmarks.push(newBookmark)
