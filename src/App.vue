@@ -6,14 +6,19 @@
       @back="currentBook = null"
       @bookmark="setBookmark"
       @settings="settingsDialog = true"
+      @bookmarklist="bookmarkDialog = true"
       />
     <v-main>
-      <Settings 
+      <Settings
         v-model="settingsDialog"
         :settings="settings"
-        :stats="bookmarkStats"
         @change-theme="settings.theme = $event"
         @change-fontsize="settings.fontSize = $event"
+        />
+      <BookmarkList
+        v-if="currentBook"
+        v-model="bookmarkDialog"
+        :bookmarks="currentBook.bookmarks"
         />
       <Viewer 
         v-if="currentBook" 
@@ -38,11 +43,11 @@ import AppBar from './components/AppBar.vue'
 import Viewer from './components/Viewer.vue'
 import Library from './components/Library.vue'
 import Settings from './components/Settings.vue'
+import BookmarkList from './components/BookmarkList.vue'
 
 var db = new Dexie("Books")
 db.version(1).stores({
-  books: "++id, file, bookmarks",
-  stats: "++id, location, percentage, time"
+  books: "++id, file, bookmarks"
 })
 
 export default {
@@ -52,14 +57,13 @@ export default {
     AppBar,
     Viewer,
     Library,
-    Settings
+    Settings,
+    BookmarkList
   },
 
   created: async function() {
     var table = await db.books.toArray()
     this.books = table.map(row => row.file)
-
-    this.bookmarkStats = await db.stats.toArray()
 
     let settings = JSON.parse(window.localStorage.getItem('settings'))
     if (settings) {
@@ -73,9 +77,9 @@ export default {
 
   data: () => ({
     books: [],
-    currentBook: null, // {file: ArrayBuffer, bookmarks: Array[String]}
-    bookmarkStats: null,
+    currentBook: null, // {file: ArrayBuffer, bookmarks: Array[Object]}
     settingsDialog: false,
+    bookmarkDialog: false,
     settings: { theme: 'light', fontSize: 100 }
   }),
 
@@ -107,9 +111,7 @@ export default {
     },
 
     async setBookmark() {
-      const [newBookmark, bookmarkStat] = this.$refs.viewer.newBookmark()
-      this.bookmarkStats.push(bookmarkStat)
-      db.stats.put(bookmarkStat)
+      const newBookmark = this.$refs.viewer.newBookmark()
 
       this.currentBook.bookmarks.push(newBookmark)
       const key = await this.getBookKey(this.currentBook.file)

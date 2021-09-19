@@ -19,6 +19,11 @@
       </v-icon>
     </v-btn>
     <v-spacer></v-spacer>
+    <v-btn v-if="onViewer" icon @click="$emit('bookmarklist')">
+      <v-icon>
+        mdi-bookmark-multiple
+      </v-icon>
+    </v-btn>
     <v-btn v-if="onViewer" icon @click="$emit('bookmark')">
       <v-icon>
         mdi-bookmark-plus

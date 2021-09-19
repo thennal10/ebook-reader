@@ -62,7 +62,8 @@ export default {
     this.rendition.themes.select(this.settings.theme)
     this.rendition.themes.fontSize(`${this.settings.fontSize}%`)
     
-    this.rendition.display(this.bookmarks[this.bookmarks.length - 1])
+    let latestBookmark = this.bookmarks.length ? this.bookmarks[this.bookmarks.length - 1].cfi: 0
+    this.rendition.display(latestBookmark)
     this.rendition.on("rendered", this.onSectionChange)
 
     this.startTime = + new Date()
@@ -96,12 +97,13 @@ export default {
       this.startTime = + new Date()
       this.elapsedTime = 0
       
-      return [currentLoc.cfi, { 
+      return {
+        cfi: currentLoc.cfi, 
         location: currentLoc.location,
         percentage: currentLoc.percentage,
         time: timeSpent,
         timestamp: this.startTime
-      }]
+      }
     },
 
     deleteBookmark(index) {
@@ -113,7 +115,7 @@ export default {
     currentBookmarks() {
       return this.bookmarks.filter((bookmark) => {
         if (this.currentSectionIndex) { // Changes only after render is over
-          const cfi = new ePub.CFI(bookmark)
+          const cfi = new ePub.CFI(bookmark.cfi)
           return cfi.spinePos == this.currentSectionIndex
         }
       })
@@ -121,7 +123,7 @@ export default {
 
     bookmarkStyles() {
       return this.currentBookmarks.map((bookmark) => {
-        const cfi = new ePub.CFI(bookmark)
+        const cfi = new ePub.CFI(bookmark.cfi)
         let range = cfi.toRange(this.iframeDoc)
         let rect = range.getBoundingClientRect()
         return {top: `${rect.top}px`}
