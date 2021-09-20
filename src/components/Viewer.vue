@@ -9,6 +9,19 @@
       />
     <div id="viewer"></div>
     <Navigator :noNext="noNext" :noPrev="noPrev" @next="rendition.next()" @prev="rendition.prev()"/>
+    <v-footer
+      fixed
+      padless
+      class="px-2 caption text--disabled font-weight-bold"
+    >
+      <span>
+        {{ Math.round(elapsedTime/60000) }}m
+      </span>
+      <v-spacer/>
+      <span v-if="rendition">
+        {{ Math.round(rendition.location.start.percentage*10000)/100 }}%
+      </span>
+    </v-footer>
   </div>
 </template>
 
