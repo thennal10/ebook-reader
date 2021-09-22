@@ -19,6 +19,7 @@
         v-if="currentBook"
         v-model="bookmarkDialog"
         :bookmarks="currentBook.bookmarks"
+        @delete-bookmark="deleteBookmark($event)"
         />
       <Viewer 
         v-if="currentBook" 

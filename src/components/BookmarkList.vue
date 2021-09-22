@@ -13,7 +13,16 @@
           :headers="headers"
           :items="computedStats"
           class="elevation-1"
-        ></v-data-table>
+        >
+          <template v-slot:item.actions="{ item }">
+            <v-icon
+              small
+              @click="deleteBookmark(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+        </v-data-table>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -33,8 +42,16 @@ export default {
         { text: 'Characters Read', value: 'charas' },
         { text: 'Time Taken (m)', value: 'time' },
         { text: 'Reading Speed (ch/m)', value: 'speed' },
-        { text: 'Time Stamp', value: 'timestamp' }
+        { text: 'Time Stamp', value: 'timestamp' },
+        { text: 'Actions', value: 'actions' }
       ]
+    }
+  },
+
+  methods: {
+    deleteBookmark(bookmark) {
+      let i = this.computedStats.indexOf(bookmark)
+      this.$emit('delete-bookmark', this.bookmarks[this.bookmarks.length - i - 1])
     }
   },
 
