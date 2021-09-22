@@ -15,7 +15,7 @@
       class="px-2 caption text--disabled font-weight-bold"
     >
       <span>
-        {{ Math.round(elapsedTime/60000) }}m
+        {{ Math.round(elapsedTime) }}m
       </span>
       <v-spacer/>
       <span v-if="rendition">
@@ -48,7 +48,6 @@ export default {
     rendition: null,
     iframeDoc: null,
     currentSectionIndex: 0,
-    startTime: 0,
     elapsedTime: 0,
     noNext: false,
     noPrev: false
@@ -78,8 +77,6 @@ export default {
     let latestBookmark = this.bookmarks.length ? this.bookmarks[this.bookmarks.length - 1].cfi: 0
     this.rendition.display(latestBookmark)
     this.rendition.on("rendered", this.onSectionChange)
-
-    this.startTime = + new Date()
   },
 
   methods: {
@@ -91,31 +88,19 @@ export default {
       // Save iframe and section index
       this.iframeDoc = document.getElementsByTagName('iframe')[0].contentWindow.document
       this.currentSectionIndex = section.index
-
-      // Track time spent
-      this.iframeDoc.addEventListener('focus', () => {
-        this.startTime = + new Date()
-      })
-      this.iframeDoc.addEventListener('blur', () => {
-        const endDate = + new Date()
-        const spentTime = endDate - this.startTime
-        this.elapsedTime += spentTime
-      })
     },
 
     newBookmark() {
       let currentLoc = this.rendition.currentLocation().start
-
-      const timeSpent = new Date() - this.startTime + this.elapsedTime
-      this.startTime = + new Date()
+      let time = this.elapsedTime
       this.elapsedTime = 0
-      
+
       return {
         cfi: currentLoc.cfi, 
         location: currentLoc.location,
         percentage: currentLoc.percentage,
-        time: timeSpent,
-        timestamp: this.startTime
+        time: time,
+        timestamp: + new Date()
       }
     },
 
@@ -148,8 +133,18 @@ export default {
     'settings.theme': function() {
       this.rendition.themes.select(this.settings.theme)
     },
+
     'settings.fontSize': function() {
       this.rendition.themes.fontSize(`${this.settings.fontSize}%`)
+    },
+
+    elapsedTime: {
+      handler() {
+        setTimeout(() => {
+          this.elapsedTime++
+        }, 60*1000)
+      },
+      immediate: true
     }
   }
 }

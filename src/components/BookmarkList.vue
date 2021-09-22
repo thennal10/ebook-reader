@@ -47,8 +47,8 @@ export default {
         return {
           percentage: `${Math.round(stat.percentage*10000)/100}%`,
           charas: stat.location - prev.location,
-          time: Math.round(stat.time/60000),
-          speed: Math.round(((stat.location - prev.location)/stat.time)*60000),
+          time: stat.time,
+          speed: stat.time ? Math.round(((stat.location - prev.location)/stat.time)): '­­—',
           timestamp: new Date(stat.timestamp).toDateString()
         }
       })
