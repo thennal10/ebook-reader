@@ -15,7 +15,7 @@
       class="px-2 caption text--disabled font-weight-bold"
     >
       <span>
-        {{ Math.round(elapsedTime) }}m
+        {{ Math.round((new Date() - startTime)/60000) }}m
       </span>
       <v-spacer/>
       <span v-if="rendition">
@@ -48,7 +48,7 @@ export default {
     rendition: null,
     iframeDoc: null,
     currentSectionIndex: 0,
-    elapsedTime: 0,
+    startTime: 0,
     noNext: false,
     noPrev: false
   }),
@@ -77,6 +77,8 @@ export default {
     let latestBookmark = this.bookmarks.length ? this.bookmarks[this.bookmarks.length - 1].cfi: 0
     this.rendition.display(latestBookmark)
     this.rendition.on("rendered", this.onSectionChange)
+
+    this.startTime = + new Date()
   },
 
   methods: {
@@ -92,8 +94,8 @@ export default {
 
     newBookmark() {
       let currentLoc = this.rendition.currentLocation().start
-      let time = this.elapsedTime
-      this.elapsedTime = 0
+      let time = Math.round((new Date() - this.startTime)/60000)
+      this.startTime = + new Date()
 
       return {
         cfi: currentLoc.cfi, 
@@ -136,15 +138,6 @@ export default {
 
     'settings.fontSize': function() {
       this.rendition.themes.fontSize(`${this.settings.fontSize}%`)
-    },
-
-    elapsedTime: {
-      handler() {
-        setTimeout(() => {
-          this.elapsedTime++
-        }, 60*1000)
-      },
-      immediate: true
     }
   }
 }
