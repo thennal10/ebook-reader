@@ -74,8 +74,10 @@ export default {
     this.rendition.themes.select(this.settings.theme)
     this.rendition.themes.fontSize(`${this.settings.fontSize}%`)
     
+    let bookLoc = window.sessionStorage.getItem('currentBookLocation')
     let latestBookmark = this.bookmarks.length ? this.bookmarks[this.bookmarks.length - 1].cfi: 0
-    this.rendition.display(latestBookmark)
+
+    this.rendition.display(bookLoc != null ? bookLoc: latestBookmark)
     this.rendition.on("rendered", this.onSectionChange)
 
     this.startTime = + new Date()
@@ -138,6 +140,10 @@ export default {
 
     'settings.fontSize': function() {
       this.rendition.themes.fontSize(`${this.settings.fontSize}%`)
+    },
+
+    'rendition.location.start.cfi': function(val) {
+      window.sessionStorage.setItem('currentBookLocation', val)
     }
   }
 }
