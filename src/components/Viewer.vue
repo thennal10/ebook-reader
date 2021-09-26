@@ -15,7 +15,7 @@
       class="px-2 caption text--disabled font-weight-bold"
     >
       <span>
-        {{ Math.round((new Date() - startTime)/60000) }}m
+        {{ timeSpent() }}m
       </span>
       <v-spacer/>
       <span v-if="rendition">
@@ -80,10 +80,15 @@ export default {
     this.rendition.display(bookLoc != null ? bookLoc: latestBookmark)
     this.rendition.on("rendered", this.onSectionChange)
 
-    this.startTime = + new Date()
+    let start = window.sessionStorage.getItem('currentStartTime')
+    this.startTime = start ? start: + new Date()
   },
 
   methods: {
+    timeSpent() {
+      return Math.round((new Date() - this.startTime)/60000)
+    },
+
     onSectionChange (section) {
       // Check if forward/backward buttons should be disabled
       this.noNext = !(section.next())
@@ -96,7 +101,7 @@ export default {
 
     newBookmark() {
       let currentLoc = this.rendition.currentLocation().start
-      let time = Math.round((new Date() - this.startTime)/60000)
+      let time = this.timeSpent()
       this.startTime = + new Date()
 
       return {
@@ -144,6 +149,7 @@ export default {
 
     'rendition.location.start.cfi': function(val) {
       window.sessionStorage.setItem('currentBookLocation', val)
+      window.sessionStorage.setItem('currentStartTime', this.startTime)
     }
   }
 }
