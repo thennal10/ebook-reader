@@ -41,7 +41,7 @@ export default {
         { text: 'Location %', value: 'percentage' },
         { text: 'Characters Read', value: 'charas' },
         { text: 'Time Taken (m)', value: 'time' },
-        { text: 'Reading Speed (ch/m)', value: 'speed' },
+        { text: 'Reading Speed (ch/h)', value: 'speed' },
         { text: 'Time Stamp', value: 'timestamp' },
         { text: 'Actions', value: 'actions' }
       ]
@@ -65,7 +65,7 @@ export default {
           percentage: `${Math.round(stat.percentage*10000)/100}%`,
           charas: stat.location - prev.location,
           time: stat.time,
-          speed: stat.time ? Math.round(((stat.location - prev.location)/stat.time)): '­­—',
+          speed: stat.time ? Math.round(((stat.location - prev.location)*60/stat.time)): '­­—',
           timestamp: new Date(stat.timestamp).toDateString()
         }
       })
