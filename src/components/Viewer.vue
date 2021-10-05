@@ -14,7 +14,7 @@
       padless
       class="px-2 caption text--disabled font-weight-bold"
     >
-      <span>
+      <span @click="startTime = + new Date()">
         {{ timeSpent() }}m
       </span>
       <v-spacer/>
