@@ -22,6 +22,27 @@
               mdi-delete
             </v-icon>
           </template>
+          <template v-slot:item.time="{ item }">
+            <v-edit-dialog
+              :return-value.sync="item.time"
+              @save="updateBookmark(item)"
+              large
+            >
+              <div>{{ item.time }}</div>
+              <template v-slot:input>
+                <div class="mt-4 text-h6">
+                  Update Time
+                </div>
+                <v-text-field
+                  v-model="item.time"
+                  :rules="[timeRules]"
+                  type="number"
+                  label="Edit"
+                  autofocus
+                ></v-text-field>
+              </template>
+            </v-edit-dialog>
+          </template>
         </v-data-table>
       </v-card-text>
     </v-card>
@@ -44,7 +65,8 @@ export default {
         { text: 'Reading Speed (ch/h)', value: 'speed' },
         { text: 'Time Stamp', value: 'timestamp' },
         { text: 'Actions', value: 'actions' }
-      ]
+      ],
+      timeRules: value => value > 0
     }
   },
 
@@ -52,6 +74,11 @@ export default {
     deleteBookmark(bookmark) {
       let i = this.computedStats.indexOf(bookmark)
       this.$emit('delete-bookmark', this.bookmarks[this.bookmarks.length - i - 1])
+    },
+
+    updateBookmark(bookmark) {
+      let i = this.computedStats.indexOf(bookmark)
+      this.$emit('update-bookmark', [this.bookmarks[this.bookmarks.length - i - 1], Number(bookmark.time)])
     }
   },
 

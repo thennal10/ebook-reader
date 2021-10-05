@@ -20,6 +20,7 @@
         v-model="bookmarkDialog"
         :bookmarks="currentBook.bookmarks"
         @delete-bookmark="deleteBookmark($event)"
+        @update-bookmark="updateBookmark($event)"
         />
       <Viewer 
         v-if="currentBook" 
@@ -121,6 +122,13 @@ export default {
 
     async deleteBookmark(bookmark) {
       this.currentBook.bookmarks = this.currentBook.bookmarks.filter(b => b != bookmark)
+      const key = await this.getBookKey(this.currentBook.file)
+      db.books.update(key, {bookmarks: this.currentBook.bookmarks})
+    },
+
+    async updateBookmark([bookmark, time]) {
+      let i = this.currentBook.bookmarks.indexOf(bookmark)
+      this.currentBook.bookmarks[i].time = time
       const key = await this.getBookKey(this.currentBook.file)
       db.books.update(key, {bookmarks: this.currentBook.bookmarks})
     },
