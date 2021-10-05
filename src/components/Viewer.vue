@@ -74,13 +74,13 @@ export default {
     this.rendition.themes.select(this.settings.theme)
     this.rendition.themes.fontSize(`${this.settings.fontSize}%`)
     
-    let bookLoc = window.sessionStorage.getItem('currentBookLocation')
+    let bookLoc = window.localStorage.getItem('currentBookLocation')
     let latestBookmark = this.bookmarks.length ? this.bookmarks[this.bookmarks.length - 1].cfi: 0
 
     this.rendition.display(bookLoc != null ? bookLoc: latestBookmark)
     this.rendition.on("rendered", this.onSectionChange)
 
-    let start = window.sessionStorage.getItem('currentStartTime')
+    let start = window.localStorage.getItem('currentStartTime')
     this.startTime = start ? start: + new Date()
   },
 
@@ -148,8 +148,8 @@ export default {
     },
 
     'rendition.location.start.cfi': function(val) {
-      window.sessionStorage.setItem('currentBookLocation', val)
-      window.sessionStorage.setItem('currentStartTime', this.startTime)
+      window.localStorage.setItem('currentBookLocation', val)
+      window.localStorage.setItem('currentStartTime', this.startTime)
     }
   }
 }
