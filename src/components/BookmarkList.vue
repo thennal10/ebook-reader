@@ -7,6 +7,16 @@
     <v-card>
       <v-card-title>
         Bookmarks
+        <v-spacer/>
+        <v-btn 
+          :href="'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(bookmarks))"
+          download="bookmarkdata.json"
+          icon
+        >
+          <v-icon>
+            mdi-download
+          </v-icon>
+        </v-btn>
       </v-card-title>
       <v-card-text>
         <v-data-table
